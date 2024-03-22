@@ -54,19 +54,21 @@ data needs to stay, shifting it left, and appending the new data.
 inputs: iteration number
 outputs: updated image
 """
-def update_fig(n):
-    data = get_sample(stream,pa)
-    arr2D,freqs,bins = get_specgram(data,rate)
+def update_fig(n, stream, pa, im):
+    data = get_sample(stream, pa)
+    arr2D, freqs, bins = get_specgram(data, rate)
     im_data = im.get_array()
     if n < SAMPLES_PER_FRAME:
-        im_data = np.hstack((im_data,arr2D))
+        im_data = np.hstack((im_data, arr2D))
         im.set_array(im_data)
     else:
-        keep_block = arr2D.shape[1]*(SAMPLES_PER_FRAME - 1)
-        im_data = np.delete(im_data,np.s_[:-keep_block],1)
-        im_data = np.hstack((im_data,arr2D))
+        keep_block = arr2D.shape[1] * (SAMPLES_PER_FRAME - 1)
+        im_data = np.delete(im_data, np.s_[:-keep_block], 1)
+        im_data = np.hstack((im_data, arr2D))
         im.set_array(im_data)
     return im,
+
+
 
 def main():
     ############### Initialize Plot ###############
@@ -90,8 +92,9 @@ def main():
     ##plt.colorbar() #enable if you want to display a color bar
 
     ############### Animate ###############
-    anim = animation.FuncAnimation(fig,update_fig,blit = False,
-                                interval=mic_read.CHUNK_SIZE/1000)
+    anim = animation.FuncAnimation(fig, lambda n: update_fig(n, stream, pa), blit=False,
+                                interval=mic_read.CHUNK_SIZE / 1000)
+
 
                                 
     try:
